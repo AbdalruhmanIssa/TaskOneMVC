@@ -19,20 +19,63 @@ namespace WebApplication1.Controllers
         }
         public ViewResult Create()
         {
-            return View();
+            return View(new Categorey ());
         }
 
         [HttpPost]
         public IActionResult Create(Categorey category)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                context.Categories.Add(category);
-                context.SaveChanges();
+                return View(category);
+            }
+            bool nameExist=context.Categories.Any(c => c.Name == category.Name);
+            context.Categories.Add(category);
+            context.SaveChanges();
+            return RedirectToAction("Index");
+
+        }
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var category = context.Categories.FirstOrDefault(c => c.Id == id);
+            if (category is null)
+            {
                 return RedirectToAction("Index");
             }
-            return View();
+
+            return View(category);
         }
+
+        [HttpPost]
+        public IActionResult Edit(Categorey category)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(category);
+            }
+
+            bool nameExists = context.Categories.Any(c => c.Name == category.Name && c.Id != category.Id);
+            if (nameExists)
+            {
+                ModelState.AddModelError("Name", "category name already exist");
+                return View(category);
+            }
+
+            var existingCategory = context.Categories.FirstOrDefault(c => c.Id == category.Id);
+            if (existingCategory == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            existingCategory.Name = category.Name;
+            existingCategory.Description = category.Description;
+
+            context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
         public RedirectToActionResult Delete(int id)
         {
             var category = context.Categories.FirstOrDefault(c => c.Id == id);

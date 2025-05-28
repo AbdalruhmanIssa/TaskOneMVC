@@ -8,8 +8,8 @@
     <h1>ADD</h1>
       <form method="post" action="/categories/create">
         <div class="mb-2">
-            <input type="text" name="Name" class="form-control" placeholder="category name .." />
-            <span class="text-danger" asp-validation-for="Name"></span>
+            <input type="text" name="Name" class="form-control" value="@Model.Name" placeholder="category name .." />
+            <span class="text-danger" asp-validation-for="Name">@Model.Description</span>
         </div>
         <div>
             <textarea name="Description" class="form-control" placeholder="category Description"></textarea>
